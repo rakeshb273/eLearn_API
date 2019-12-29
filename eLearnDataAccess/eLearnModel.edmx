@@ -1,0 +1,227 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="eLearnModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Courses">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CourseName" Type="nvarchar" MaxLength="200" />
+          <Property Name="CourseCode" Type="nvarchar" MaxLength="50" />
+          <Property Name="Description" Type="nvarchar(max)" />
+          <Property Name="StartDate" Type="date" />
+          <Property Name="EndDate" Type="date" />
+          <Property Name="isActive" Type="bit" />
+          <Property Name="Image" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="CoursesTaken">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="CourseID" Type="int" />
+          <Property Name="LearnerID" Type="int" />
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Learners">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="FirstName" Type="nvarchar" MaxLength="200" />
+          <Property Name="LastName" Type="nvarchar" MaxLength="200" />
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Mobile" Type="nvarchar" MaxLength="50" />
+          <Property Name="Email" Type="nvarchar" MaxLength="200" />
+          <Property Name="DOB" Type="date" />
+          <Property Name="Gender" Type="nvarchar" MaxLength="50" />
+          <Property Name="ProfileImage" Type="nvarchar(max)" />
+          <Property Name="isActive" Type="bit" />
+        </EntityType>
+        <Association Name="FK_Courses">
+          <End Role="Courses" Type="Self.Courses" Multiplicity="0..1" />
+          <End Role="CoursesTaken" Type="Self.CoursesTaken" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Courses">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="CoursesTaken">
+              <PropertyRef Name="CourseID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Learner">
+          <End Role="Learners" Type="Self.Learners" Multiplicity="0..1" />
+          <End Role="CoursesTaken" Type="Self.CoursesTaken" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Learners">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="CoursesTaken">
+              <PropertyRef Name="LearnerID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="eLearnModelStoreContainer">
+          <EntitySet Name="Courses" EntityType="Self.Courses" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="CoursesTaken" EntityType="Self.CoursesTaken" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Learners" EntityType="Self.Learners" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_Courses" Association="Self.FK_Courses">
+            <End Role="Courses" EntitySet="Courses" />
+            <End Role="CoursesTaken" EntitySet="CoursesTaken" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Learner" Association="Self.FK_Learner">
+            <End Role="Learners" EntitySet="Learners" />
+            <End Role="CoursesTaken" EntitySet="CoursesTaken" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="eLearnModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="eLearnEntities" annotation:LazyLoadingEnabled="true" >
+          <EntitySet Name="Courses" EntityType="eLearnModel.Courses" />
+          <EntitySet Name="Learners" EntityType="eLearnModel.Learner" />
+          <EntitySet Name="CoursesTakens" EntityType="eLearnModel.CoursesTaken" />
+          <AssociationSet Name="FK_Courses" Association="eLearnModel.FK_Courses">
+            <End Role="Cours" EntitySet="Courses" />
+            <End Role="CoursesTaken" EntitySet="CoursesTakens" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Learner" Association="eLearnModel.FK_Learner">
+            <End Role="Learner" EntitySet="Learners" />
+            <End Role="CoursesTaken" EntitySet="CoursesTakens" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="Courses">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CourseName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="CourseCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="StartDate" Type="DateTime" Precision="0" />
+          <Property Name="EndDate" Type="DateTime" Precision="0" />
+          <Property Name="isActive" Type="Boolean" />
+          <Property Name="Image" Type="String" />
+          <NavigationProperty Name="CoursesTakens" Relationship="eLearnModel.FK_Courses" FromRole="Cours" ToRole="CoursesTaken" />
+        </EntityType>
+        <EntityType Name="Learner">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="FirstName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="LastName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Mobile" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Email" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="DOB" Type="DateTime" Precision="0" />
+          <Property Name="Gender" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ProfileImage" Type="String" />
+          <Property Name="isActive" Type="Boolean" />
+          <NavigationProperty Name="CoursesTakens" Relationship="eLearnModel.FK_Learner" FromRole="Learner" ToRole="CoursesTaken" />
+        </EntityType>
+        <EntityType Name="CoursesTaken">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="CourseID" Type="Int32" />
+          <Property Name="LearnerID" Type="Int32" />
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <NavigationProperty Name="Courses" Relationship="eLearnModel.FK_Courses" FromRole="CoursesTaken" ToRole="Cours" />
+          <NavigationProperty Name="Learner" Relationship="eLearnModel.FK_Learner" FromRole="CoursesTaken" ToRole="Learner" />
+        </EntityType>
+        <Association Name="FK_Courses">
+          <End Type="eLearnModel.Courses" Role="Cours" Multiplicity="0..1" />
+          <End Type="eLearnModel.CoursesTaken" Role="CoursesTaken" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Cours">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="CoursesTaken">
+              <PropertyRef Name="CourseID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Learner">
+          <End Type="eLearnModel.Learner" Role="Learner" Multiplicity="0..1" />
+          <End Type="eLearnModel.CoursesTaken" Role="CoursesTaken" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Learner">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="CoursesTaken">
+              <PropertyRef Name="LearnerID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="eLearnModelStoreContainer" CdmEntityContainer="eLearnEntities" >
+          <EntitySetMapping Name="Courses">
+            <EntityTypeMapping TypeName="eLearnModel.Courses">
+              <MappingFragment StoreEntitySet="Courses">
+                <ScalarProperty Name="Image" ColumnName="Image" />
+                <ScalarProperty Name="isActive" ColumnName="isActive" />
+                <ScalarProperty Name="EndDate" ColumnName="EndDate" />
+                <ScalarProperty Name="StartDate" ColumnName="StartDate" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="CourseCode" ColumnName="CourseCode" />
+                <ScalarProperty Name="CourseName" ColumnName="CourseName" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Learners">
+            <EntityTypeMapping TypeName="eLearnModel.Learner">
+              <MappingFragment StoreEntitySet="Learners">
+                <ScalarProperty Name="isActive" ColumnName="isActive" />
+                <ScalarProperty Name="ProfileImage" ColumnName="ProfileImage" />
+                <ScalarProperty Name="Gender" ColumnName="Gender" />
+                <ScalarProperty Name="DOB" ColumnName="DOB" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Mobile" ColumnName="Mobile" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CoursesTakens">
+            <EntityTypeMapping TypeName="eLearnModel.CoursesTaken">
+              <MappingFragment StoreEntitySet="CoursesTaken">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="LearnerID" ColumnName="LearnerID" />
+                <ScalarProperty Name="CourseID" ColumnName="CourseID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

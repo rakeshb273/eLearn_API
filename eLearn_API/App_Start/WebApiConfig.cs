@@ -1,7 +1,10 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
+using System.Web.Http.Cors;
 
 namespace eLearn_API
 {
@@ -19,6 +22,13 @@ namespace eLearn_API
                 routeTemplate: "api/{controller}/{id}",
                 defaults: new { id = RouteParameter.Optional }
             );
+            config.Formatters.JsonFormatter.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+            config.Formatters.JsonFormatter.SerializerSettings.PreserveReferencesHandling = Newtonsoft.Json.PreserveReferencesHandling.None;
+            //var json = config.Formatters.JsonFormatter;
+            //json.SerializerSettings.PreserveReferencesHandling = Newtonsoft.Json.PreserveReferencesHandling.Objects;
+            //config.Formatters.Remove(config.Formatters.XmlFormatter);
+            //var cors = new EnableCorsAttribute("http://localhost:4200/", "*", "*");
+            config.EnableCors();
         }
     }
 }
