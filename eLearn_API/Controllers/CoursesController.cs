@@ -9,6 +9,10 @@ using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Description;
 using eLearnDataAccess;
+using eLearn_API.Models;
+
+
+
 
 namespace eLearn_API.Controllers
 {
@@ -18,22 +22,72 @@ namespace eLearn_API.Controllers
         private eLearnEntities db = new eLearnEntities();
 
         // GET: api/Courses
-        public IQueryable<Courses> GetCourses()
+        public List<CourseModel> GetCourses()
         {
-            return db.Courses;
+            List<CourseModel> allCourses = new List<CourseModel>();
+            foreach(var course in db.Courses)
+            {
+                CourseModel cnow = new CourseModel();
+                cnow.ID = course.ID;
+                cnow.CourseCode = course.CourseCode;
+                cnow.CourseName = course.CourseName;
+                cnow.Description = course.Description;
+                cnow.StartDate = course.StartDate;
+                cnow.EndDate = course.EndDate;
+                cnow.ID = course.ID;
+                cnow.Image = course.Image;
+                List<CoursesTakensModel> allCTs = new List<CoursesTakensModel>();
+                foreach (var ct in course.CoursesTakens)
+                {
+                    CoursesTakensModel ctnow = new CoursesTakensModel();
+                    ctnow.id = ct.ID;
+                    ctnow.CourseID = ct.CourseID;
+                    ctnow.LearnerID = ct.LearnerID;
+                    ctnow.CourseName = ct.Courses.CourseName;
+                    ctnow.LearnerName = ct.Learner.FirstName + " " + ct.Learner.LastName;
+                    allCTs.Add(ctnow);
+                }
+                cnow.CoursesTakens = allCTs;
+                allCourses.Add(cnow);
+
+            }
+
+
+            return allCourses;
         }
 
         // GET: api/Courses/5
         [ResponseType(typeof(Courses))]
         public IHttpActionResult GetCourses(int id)
         {
-            Courses courses = db.Courses.Find(id);
-            if (courses == null)
+            Courses course = db.Courses.Find(id);
+            CourseModel cnow = new CourseModel();
+            cnow.ID = course.ID;
+            cnow.CourseCode = course.CourseCode;
+            cnow.CourseName = course.CourseName;
+            cnow.Description = course.Description;
+            cnow.StartDate = course.StartDate;
+            cnow.EndDate = course.EndDate;
+            cnow.ID = course.ID;
+            cnow.Image = course.Image;
+            List<CoursesTakensModel> allCTs = new List<CoursesTakensModel>();
+            foreach (var ct in course.CoursesTakens)
+            {
+                CoursesTakensModel ctnow = new CoursesTakensModel();
+                ctnow.id = ct.ID;
+                ctnow.CourseID = ct.CourseID;
+                ctnow.LearnerID = ct.LearnerID;
+                ctnow.CourseName = ct.Courses.CourseName;
+                ctnow.LearnerName = ct.Learner.FirstName + " " + ct.Learner.LastName;
+                allCTs.Add(ctnow);
+            }
+            cnow.CoursesTakens = allCTs;
+            if (course == null)
             {
                 return NotFound();
             }
 
-            return Ok(courses);
+            return Ok(cnow);
         }
 
         // PUT: api/Courses/5
@@ -58,7 +112,7 @@ namespace eLearn_API.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!CoursesExists(courses))
+                if (!CoursesExists(courses.CourseCode,courses.CourseName))
                 {
                     return NotFound();
                 }
@@ -73,17 +127,27 @@ namespace eLearn_API.Controllers
 
         // POST: api/Courses
         [ResponseType(typeof(Courses))]
-        public IHttpActionResult PostCourses(Courses courses)
+        public IHttpActionResult PostCourses([FromBody]CourseModel _course)
         {
+
+            Courses course = new Courses();
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
+            if (!CoursesExists(_course.CourseName,_course.CourseCode))
+            {
+                course.CourseCode = _course.CourseCode;
+                course.CourseName = _course.CourseName;
+                course.StartDate = _course.StartDate;
+                course.EndDate = _course.EndDate;
+                course.Image = _course.Image;
+                db.Courses.Add(course);
+                db.SaveChanges();
+            }
 
-            db.Courses.Add(courses);
-            db.SaveChanges();
-
-            return CreatedAtRoute("DefaultApi", new { id = courses.ID }, courses);
+            return CreatedAtRoute("DefaultApi", new { id = course.ID }, course);
         }
 
         // DELETE: api/Courses/5
@@ -111,9 +175,18 @@ namespace eLearn_API.Controllers
             base.Dispose(disposing);
         }
 
-        private bool CoursesExists(Courses course)
+        
+
+        [HttpGet]
+        public bool isCoursesExists([FromUri]string CourseCode, [FromUri]string CourseName)
         {
-            return db.Courses.Count(e => e.CourseCode == course.CourseCode || e.CourseName==course.CourseName) > 0;
+            return CoursesExists(CourseCode, CourseName);
+        }
+        
+       
+        private bool CoursesExists(string CourseCode,string CourseName)
+        {
+            return db.Courses.Count(e => e.CourseCode == CourseCode || e.CourseName==CourseName) > 0;
         }
 
         [HttpGet]
